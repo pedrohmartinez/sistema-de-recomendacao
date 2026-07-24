@@ -1,45 +1,59 @@
-# Sistema de recomendação com A*
+# Exemplos de IA para recomendação
 
-Projeto educacional em Python que ilustra como modelar uma recomendação de produtos como um problema de busca em grafo, utilizando o algoritmo A* (A-star).
+Projeto educacional em Python com dois exemplos de técnicas de Inteligência Artificial aplicadas ao contexto de recomendação e conversão de produtos:
 
-## Como funciona
+- busca em grafo com o algoritmo A*;
+- estimativa de compra por uma rede bayesiana simplificada.
 
-Cada produto possui:
+O projeto não requer bibliotecas externas.
 
-- `nome`;
-- `categoria`;
-- `conversao_probabilidade`: uma estimativa de chance de conversão.
+## Arquivos
 
-O sistema cria um grafo completo: cada produto é conectado a todos os demais. Durante a busca, a heurística prioriza produtos com maior probabilidade de conversão. Como o A* minimiza o custo, a função `heuristica` retorna o valor negativo dessa probabilidade.
-
-O exemplo define quatro produtos, parte do **Produto A** e procura um caminho até o **Produto C**. A saída esperada é:
-
-```text
-Caminho recomendado:
-Produto A (Categoria 1)
-Produto B (Categoria 1)
-Produto C (Categoria 2)
-```
-
-## Estrutura
-
-| Componente | Responsabilidade |
+| Arquivo | Descrição |
 | --- | --- |
-| `Produto` | Representa um item do catálogo. |
-| `AStarRecommendation` | Monta o grafo e executa a busca A*. |
-| `heuristica` | Avalia a atratividade de um produto pela probabilidade de conversão. |
-| `recomendacao.py` | Contém as classes, a heurística e um exemplo executável. |
+| `recomendacao.py` | Recomenda produtos por meio de uma busca A*. |
+| `rede-bayesianas.py` | Calcula a probabilidade de compra a partir de evidências do comportamento do cliente. |
 
-## Como executar
+## Recomendação com A*
 
-Pré-requisito: Python 3 instalado. O projeto usa somente a biblioteca padrão (`heapq`).
+O arquivo `recomendacao.py` representa cada item por meio da classe `Produto`, contendo nome, categoria e probabilidade de conversão. A classe `AStarRecommendation` cria um grafo em que todos os produtos são vizinhos e executa a busca A* entre um produto inicial e um objetivo.
+
+A heurística retorna o negativo da probabilidade de conversão. Isso faz com que produtos com maior chance de conversão tenham prioridade, pois o A* busca o menor custo estimado.
+
+Execute com:
 
 ```bash
 python recomendacao.py
 ```
 
+No exemplo incluído, a busca parte do Produto A até o Produto C.
+
+## Rede bayesiana simplificada
+
+O arquivo `rede-bayesianas.py` usa uma tabela de probabilidades para estimar se um cliente comprará ou não. A decisão considera três evidências binárias:
+
+| Evidência | `0` | `1` |
+| --- | --- | --- |
+| `HistoricoCompras` | Não possui histórico de compras | Possui histórico de compras |
+| `TempoNoSite` | Permaneceu pouco tempo | Permaneceu muito tempo |
+| `ClicouEmPromocao` | Não clicou em promoção | Clicou em promoção |
+
+A função `calcular_probabilidade_compra(evidencias)` consulta a probabilidade de compra associada à combinação das evidências e retorna também a probabilidade complementar de não comprar.
+
+O cenário de exemplo representa um cliente que possui histórico de compras, ficou pouco tempo no site e clicou em uma promoção. O resultado é:
+
+```text
+Probabilidades de Compra:
+Comprar: 0.70
+Não Comprar: 0.30
+```
+
+Execute com:
+
+```bash
+python rede-bayesianas.py
+```
+
 ## Observações
 
-Este código é uma demonstração didática, e não um recomendador de produção. Embora o grafo conecte todos os produtos diretamente, a busca pode incluir produtos intermediários conforme a prioridade definida pela heurística. Além disso, a heurística usa uma probabilidade previamente informada; um sistema real normalmente aprenderia esse valor com dados de usuários, interações e histórico de compras.
-
-Possíveis evoluções incluem criar conexões baseadas em categorias ou comportamento de navegação, usar custos de transição reais e calcular probabilidades de conversão a partir de dados históricos.
+Os dois scripts são demonstrações didáticas. As probabilidades são definidas manualmente e a rede bayesiana é representada por uma tabela de consulta, sem treinamento estatístico. Em um sistema real, os valores poderiam ser estimados a partir de dados históricos, e as conexões entre produtos poderiam refletir categorias, navegação e interações reais dos usuários.
